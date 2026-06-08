@@ -65,10 +65,25 @@ for entry in "${SKILLS[@]}"; do
     exit 1
   fi
 
+  skill_name="$(basename "$dest")"
+
   echo "→ Mirroring $src -> $dest"
   rm -rf "$dest_abs"
   mkdir -p "$dest_abs"
   cp -R "$src_abs/." "$dest_abs/"
+
+  # Rename the skill to match its vendored directory: rewrite the `name:` field
+  # in the SKILL.md front matter (first front-matter block only). Idempotent —
+  # each run re-copies the pristine upstream file before rewriting. awk is used
+  # instead of `sed -i` to avoid the BSD/GNU in-place-flag difference.
+  if [[ -f "$dest_abs/SKILL.md" ]]; then
+    awk -v newname="$skill_name" '
+      /^---[[:space:]]*$/        { fence++; print; next }
+      fence == 1 && !done && /^name:[[:space:]]/ { print "name: " newname; done=1; next }
+                                  { print }
+    ' "$dest_abs/SKILL.md" > "$dest_abs/SKILL.md.tmp"
+    mv "$dest_abs/SKILL.md.tmp" "$dest_abs/SKILL.md"
+  fi
 
   # Provenance marker. This file is our addition (not upstream) and makes the
   # "read-only mirror" contract visible to anyone who opens the directory.
@@ -82,7 +97,8 @@ for entry in "${SKILLS[@]}"; do
 - Commit: \`$SHA\`
 - License: Apache-2.0 (see \`licenses/google-adk-python-LICENSE.txt\`)
 - Synced: $TODAY
-- Modification from upstream: directory renamed to \`$(basename "$dest")\`.
+- Modifications from upstream: directory renamed to \`$skill_name\`; the \`name:\`
+  field in \`SKILL.md\` was updated to match.
 EOF
 done
 
@@ -115,9 +131,9 @@ EOF
     echo "    - ${entry##*|}  (from ${entry%%|*})"
   done
   cat <<EOF
-- Modifications: vendored directories renamed with a \`google-\` prefix; a
-  \`VENDORED.md\` provenance marker added to each. No upstream source files were
-  modified.
+- Modifications: vendored directories renamed with a \`google-\` prefix; the
+  \`name:\` field in each \`SKILL.md\` updated to match its directory; a
+  \`VENDORED.md\` provenance marker added to each.
 EOF
 } > "$REPO_ROOT/THIRD_PARTY_LICENSES"
 

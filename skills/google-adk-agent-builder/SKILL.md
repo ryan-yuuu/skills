@@ -1,5 +1,5 @@
 ---
-name: adk-agent-builder
+name: google-adk-agent-builder
 description: Central hub for building, testing, and iterating on ADK agents. Trigger this skill when the user wants to create a new agent, configure modes (task, single-turn), or build graph-based workflows.
 ---
 
