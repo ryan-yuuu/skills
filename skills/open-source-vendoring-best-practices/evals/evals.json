@@ -1,0 +1,60 @@
+{
+  "skill_name": "open-source-vendoring-best-practices",
+  "evals": [
+    {
+      "id": 1,
+      "name": "permissive-mit-happy-path",
+      "prompt": "I cloned a little repo into ./tiny-debounce. Copy the debounce function from tiny-debounce/debounce.js into our project at src/util/debounce.js so I can use it.",
+      "expected_output": "Identifies the license as MIT (permissive) before copying, copies debounce.js into src/util/, preserves or adds a source/copyright header on the copied file, creates an attribution file (e.g. THIRD_PARTY_LICENSES) containing the MIT license text and the original copyright holder, records provenance (source + version), and ends with a short compliance summary.",
+      "files": ["evals/fixtures/tiny-debounce/"],
+      "expectations": [
+        "The license was identified as MIT before the code was copied",
+        "The debounce function was copied into src/util/debounce.js",
+        "An attribution file (e.g. THIRD_PARTY_LICENSES / NOTICE) was created containing the full MIT license text",
+        "The attribution preserves the original copyright line naming 'Jane Developer'",
+        "The copied file retains or gains a header identifying the upstream source",
+        "Provenance was recorded (source repo/path plus a commit or version reference)",
+        "A short compliance summary of the license obligations was produced"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "gpl-stop-and-flag",
+      "prompt": "Grab the parse_config function from snazzy-parser/parser.py and drop it into our src/config.py.",
+      "expected_output": "Detects the source is GPL-3.0 (strong copyleft) BEFORE copying, does NOT copy parse_config into src/config.py, explains the specific copyleft risk in plain language (could require the whole project to be released under GPL), and asks the user to decide / flags it for a human rather than proceeding.",
+      "files": ["evals/fixtures/snazzy-parser/"],
+      "expectations": [
+        "The license was identified as GPL-3.0 (strong copyleft)",
+        "The parse_config code was NOT copied into src/config.py (no copy was made)",
+        "The specific copyleft risk was explained (e.g. could force the whole project to be open-sourced under GPL)",
+        "The decision was deferred to the user / flagged for human judgment rather than proceeding automatically"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "no-license-stop-and-flag",
+      "prompt": "Copy the RetryWithBackoff helper from cool-snippet/util.go into our internal/retry package, it's exactly what I need.",
+      "expected_output": "Detects there is NO license file in the source, explains that no license means all rights reserved and the code is not safe to copy, does NOT copy the function, and suggests a path forward (ask the author for a license, or find a licensed alternative).",
+      "files": ["evals/fixtures/cool-snippet/"],
+      "expectations": [
+        "Detected that the source has no license file",
+        "Explained that absence of a license means all rights reserved / not safe to copy",
+        "The RetryWithBackoff code was NOT copied into the destination",
+        "Suggested a concrete path forward (e.g. ask the author for a license or find a licensed alternative)"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "edit-already-vendored",
+      "prompt": "Our src/util/debounce.js needs a leading-edge option: when called with { leading: true } it should fire on the first call too. Please update it.",
+      "expected_output": "Recognizes the file is vendored third-party code (it has a source header and a THIRD_PARTY_LICENSES entry), makes the requested leading-edge change, keeps the original upstream copyright/source header intact, marks the modification (e.g. updates the 'Adapted' note to describe the change), and does NOT block on licensing since it is already permissive and attributed.",
+      "files": ["evals/fixtures/vendored-project/"],
+      "expectations": [
+        "The requested leading-edge behavior was implemented in debounce.js",
+        "The original upstream copyright/source header was preserved (the 'Jane Developer' / source line was not deleted)",
+        "The modification was marked (e.g. the 'Adapted' note describes the change rather than still saying 'verbatim')",
+        "The edit proceeded without incorrectly re-blocking on licensing, since the code is already permissive and attributed"
+      ]
+    }
+  ]
+}
