@@ -28,6 +28,28 @@ provenance recorded, risky licenses flagging, and other oss best practices.
 $ npx skills add https://github.com/ryan-yuuu/skills-for-dummies --skill open-source-vendoring-best-practices
 ```
 
+### [google-adk-architecture](skills/google-adk-architecture)
+
+Understand Google ADK's internals — graph orchestration, execution flow, resumption and checkpointing, node contracts, and observability.
+_Vendored from [google/adk-python](https://github.com/google/adk-python) (Apache-2.0)._
+
+#### Install
+
+```bash
+$ npx skills add https://github.com/ryan-yuuu/skills-for-dummies --skill google-adk-architecture
+```
+
+### [google-adk-agent-builder](skills/google-adk-agent-builder)
+
+Build, test, and iterate on Google ADK agents — agent modes, tool binding, graph-based workflows, and multi-agent patterns.
+_Vendored from [google/adk-python](https://github.com/google/adk-python) (Apache-2.0)._
+
+#### Install
+
+```bash
+$ npx skills add https://github.com/ryan-yuuu/skills-for-dummies --skill google-adk-agent-builder
+```
+
 <br>
 
 ## License
